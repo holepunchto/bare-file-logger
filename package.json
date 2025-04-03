@@ -1,0 +1,39 @@
+{
+  "name": "bare-file-logger",
+  "version": "1.0.0",
+  "description": "File system logger for Bare",
+  "exports": {
+    "./package": "./package.json",
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "test": "prettier . --check && bare test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holepunchto/bare-file-logger.git"
+  },
+  "author": "Holepunch",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/holepunchto/bare-file-logger/issues"
+  },
+  "homepage": "https://github.com/holepunchto/bare-file-logger#readme",
+  "dependencies": {
+    "bare-fs": "^4.1.2",
+    "bare-logger": "^1.1.0"
+  },
+  "devDependencies": {
+    "bare-path": "^3.0.0",
+    "brittle": "^3.4.0",
+    "prettier": "^3.3.3",
+    "prettier-config-standard": "^7.0.0"
+  }
+}
