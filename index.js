@@ -11,12 +11,7 @@ module.exports = class FileLog extends Log {
   append(label, ...data) {
     fs.writeSync(
       this._fd,
-      label.padEnd(5, ' ') +
-        ' ' +
-        new Date().toISOString() +
-        ' ' +
-        this.format(...data) +
-        '\n'
+      label.padEnd(5, ' ') + ' ' + new Date().toISOString() + ' ' + this.format(...data) + '\n'
     )
   }
 
