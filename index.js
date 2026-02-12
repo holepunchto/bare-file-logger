@@ -2,10 +2,19 @@ const Log = require('bare-logger')
 const fs = require('bare-fs')
 
 module.exports = class FileLog extends Log {
-  constructor(path) {
+  constructor(path, opts = {}) {
+    const { maxSize = 0 } = opts
+
     super({ colors: false })
 
-    this._fd = fs.openSync(path, 'a+')
+    this._path = path
+    this._maxSize = maxSize
+
+    this._fd = fs.openSync(this._path, 'a+')
+
+    if (this._maxSize > 0 && fs.fstatSync(this._fd).size > this._maxSize) {
+      this.clear()
+    }
   }
 
   append(label, ...data) {
@@ -37,6 +46,9 @@ module.exports = class FileLog extends Log {
 
   clear() {
     fs.ftruncateSync(this._fd)
+    fs.closeSync(this._fd)
+
+    this._fd = fs.openSync(this._path, 'a+')
   }
 
   close() {
