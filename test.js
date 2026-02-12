@@ -15,7 +15,7 @@ test('basic', async (t) => {
 })
 
 test('rotate - renames file when 80% of maxSize is reached', async (t) => {
-  t.plan(4)
+  t.plan(5)
 
   const tmp = await t.tmp()
   const logPath = path.join(tmp, 'test.log')
@@ -24,12 +24,16 @@ test('rotate - renames file when 80% of maxSize is reached', async (t) => {
   const log = new FileLog(logPath, {
     maxSize: 50,
     rotateInterval: 100,
-    rotate(filePath) {
-      t.is(filePath, logPath)
+    rotate() {
       return rotatedPath
     }
   })
   t.teardown(() => log.close())
+
+  log.once('rotate', (originalPath, destPath) => {
+    t.is(originalPath, logPath, 'event has original path')
+    t.is(destPath, rotatedPath, 'event has rotated path')
+  })
 
   for (let i = 0; i < 5; i++) {
     log.info('filling up the log file with data')

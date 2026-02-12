@@ -51,6 +51,10 @@ const log = new FileLog('app.log', {
 
 When the log file reaches 80% of `maxSize`, the `rotate` function is called. If it returns a path, the current file is renamed to that path and a fresh log file is opened. If it returns a falsy value, no action is taken.
 
+#### `log.on('rotate', (path, dest) => {})`
+
+Emitted after a successful rotation. `path` is the original log file path (now empty and ready for new writes) and `dest` is the path the previous log was renamed to.
+
 ## License
 
 Apache-2.0
