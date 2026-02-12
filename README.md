@@ -12,10 +12,19 @@ const log = new FileLog('console.log')
 log.info('Hello %s', 'world!')
 ```
 
-Optionally pass a `maxSize` to automatically truncate old entries when the file exceeds the given size in bytes:
+## API
+
+#### `const log = new FileLog(path[, options])`
+
+Options include:
 
 ```js
-const log = new FileLog('console.log', { maxSize: 200 * 1024 * 1024 }) // 200 MB
+options = {
+  // Maximum allowed byte size of the log file. This is a hint and not a hard
+  // limit; the logger will do its best to keep the file size within the limit,
+  // but provides no guarantees.
+  maxSize: 0
+}
 ```
 
 ## License
