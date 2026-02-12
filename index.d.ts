@@ -6,7 +6,7 @@ interface FileLog extends Log, Disposable {
 }
 
 declare class FileLog {
-  constructor()
+  constructor(path: string, opts?: { maxSize?: number })
 }
 
 export = FileLog
