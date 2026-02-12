@@ -9,7 +9,6 @@ module.exports = class FileLog extends Log {
 
     this._path = path
     this._maxSize = maxSize
-
     this._fd = fs.openSync(this._path, 'a+')
 
     if (this._maxSize > 0 && fs.fstatSync(this._fd).size > this._maxSize) {
@@ -47,7 +46,6 @@ module.exports = class FileLog extends Log {
   clear() {
     fs.ftruncateSync(this._fd)
     fs.closeSync(this._fd)
-
     this._fd = fs.openSync(this._path, 'a+')
   }
 
