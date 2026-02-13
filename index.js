@@ -2,7 +2,7 @@ const Log = require('bare-logger')
 const EventEmitter = require('bare-events')
 const fs = require('bare-fs')
 
-const FileLog = (module.exports = class FileLog extends EventEmitter {
+class FileLog extends EventEmitter {
   constructor(path, opts = {}) {
     const { maxSize = 0, rotate = null, rotateInterval = 2000 } = opts
 
@@ -44,7 +44,7 @@ const FileLog = (module.exports = class FileLog extends EventEmitter {
     if (this._maxSize <= 0 || this._rotate === null) return
 
     this._interval = setInterval(() => this._checkRotate(), this._rotateInterval)
-    if (this._interval.unref) this._interval.unref()
+    this._interval.unref()
   }
 
   append(label, ...data) {
@@ -95,6 +95,8 @@ const FileLog = (module.exports = class FileLog extends EventEmitter {
   [Symbol.dispose]() {
     this.close()
   }
-})
+}
 
 FileLog.prototype.format = Log.prototype.format
+
+module.exports = FileLog
