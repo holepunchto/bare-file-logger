@@ -14,7 +14,7 @@ test('basic', async (t) => {
   await t.execution(() => log.error('This is an error log'))
 })
 
-test('rotate - renames file when 80% of maxSize is reached', async (t) => {
+test('rotate - renames file when maxSize is reached', async (t) => {
   t.plan(5)
 
   const tmp = await t.tmp()
@@ -75,7 +75,7 @@ test('rotate - does nothing when rotate returns falsy', async (t) => {
   t.is(fs.statSync(logPath).size, sizeBefore, 'file was not modified')
 })
 
-test('rotate - does not call rotate when under 80% threshold', async (t) => {
+test('rotate - does not call rotate when under threshold', async (t) => {
   t.plan(1)
 
   const tmp = await t.tmp()

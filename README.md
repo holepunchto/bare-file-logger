@@ -25,10 +25,10 @@ options = {
   // but provides no guarantees.
   maxSize: 0,
 
-  // A function called when the file size reaches 80% of `maxSize`. It receives
-  // the current file path and should return a new path to rename the file to,
-  // or a falsy value to do nothing. After a successful rename, a new empty log
-  // file is opened at the original path.
+  // A function called when the file size reaches `maxSize`. It receives the
+  // current file path and should return a new path to rename the file to, or a
+  // falsy value to do nothing. After a successful rename, a new empty log file
+  // is opened at the original path.
   rotate: null,
 
   // The interval in milliseconds at which the file size is checked against
@@ -49,7 +49,7 @@ const log = new FileLog('app.log', {
 })
 ```
 
-When the log file reaches 80% of `maxSize`, the `rotate` function is called. If it returns a path, the current file is renamed to that path and a fresh log file is opened. If it returns a falsy value, no action is taken.
+When the log file reaches `maxSize`, the `rotate` function is called. If it returns a path, the current file is renamed to that path and a fresh log file is opened. If it returns a falsy value, no action is taken.
 
 #### `log.on('rotate', (path, dest) => {})`
 
