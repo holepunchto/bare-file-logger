@@ -2,14 +2,13 @@ const Log = require('bare-logger')
 const EventEmitter = require('bare-events')
 const fs = require('bare-fs')
 
-module.exports = class FileLog extends EventEmitter {
+const FileLog = (module.exports = class FileLog extends EventEmitter {
   constructor(path, opts = {}) {
     const { maxSize = 0, rotate = null, rotateInterval = 2000 } = opts
 
     super()
 
-    this._log = new Log({ colors: false })
-
+    this.colors = false
     this._path = path
     this._maxSize = maxSize
     this._rotate = rotate
@@ -28,7 +27,7 @@ module.exports = class FileLog extends EventEmitter {
 
     const size = fs.fstatSync(this._fd).size
 
-    if (size >= this._maxSize * 0.8) {
+    if (size >= this._maxSize) {
       const dest = this._rotate(this._path)
 
       if (dest) {
@@ -45,12 +44,13 @@ module.exports = class FileLog extends EventEmitter {
     if (this._maxSize <= 0 || this._rotate === null) return
 
     this._interval = setInterval(() => this._checkRotate(), this._rotateInterval)
+    if (this._interval.unref) this._interval.unref()
   }
 
   append(label, ...data) {
     fs.writeSync(
       this._fd,
-      label.padEnd(5, ' ') + ' ' + new Date().toISOString() + ' ' + this._log.format(...data) + '\n'
+      label.padEnd(5, ' ') + ' ' + new Date().toISOString() + ' ' + this.format(...data) + '\n'
     )
 
     this._startRotateCheck()
@@ -95,4 +95,6 @@ module.exports = class FileLog extends EventEmitter {
   [Symbol.dispose]() {
     this.close()
   }
-}
+})
+
+FileLog.prototype.format = Log.prototype.format
