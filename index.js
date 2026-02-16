@@ -8,43 +8,19 @@ class FileLog extends EventEmitter {
 
     super()
 
-    this.colors = false
     this._path = path
     this._maxSize = maxSize
     this._rotate = rotate
-    this._rotateInterval = rotateInterval
-    this._interval = null
-    this._fd = fs.openSync(this._path, 'a+')
 
-    if (this._maxSize > 0 && fs.fstatSync(this._fd).size > this._maxSize) {
-      this.clear()
-    }
-  }
-
-  _checkRotate() {
-    if (this._fd === -1) return
-    if (this._maxSize <= 0 || this._rotate === null) return
-
-    const size = fs.fstatSync(this._fd).size
-
-    if (size >= this._maxSize) {
-      const dest = this._rotate(this._path)
-
-      if (dest) {
-        fs.closeSync(this._fd)
-        fs.renameSync(this._path, dest)
-        this._fd = fs.openSync(this._path, 'a+')
-        this.emit('rotate', this._path, dest)
-      }
-    }
-  }
-
-  _startRotateCheck() {
-    if (this._interval !== null) return
-    if (this._maxSize <= 0 || this._rotate === null) return
-
-    this._interval = setInterval(() => this._checkRotate(), this._rotateInterval)
+    this._interval = setInterval(this._gc.bind(this), rotateInterval)
     this._interval.unref()
+
+    this._fd = fs.openSync(this._path, 'a+')
+    this._gc()
+  }
+
+  get colors() {
+    return false
   }
 
   append(label, ...data) {
@@ -52,8 +28,6 @@ class FileLog extends EventEmitter {
       this._fd,
       label.padEnd(5, ' ') + ' ' + new Date().toISOString() + ' ' + this.format(...data) + '\n'
     )
-
-    this._startRotateCheck()
   }
 
   debug(...data) {
@@ -79,21 +53,45 @@ class FileLog extends EventEmitter {
   clear() {
     fs.ftruncateSync(this._fd)
     fs.closeSync(this._fd)
+
     this._fd = fs.openSync(this._path, 'a+')
   }
 
   close() {
     if (this._fd === -1) return
-    if (this._interval !== null) {
-      clearInterval(this._interval)
-      this._interval = null
-    }
+
+    if (this._interval) clearInterval(this._interval)
+
     fs.closeSync(this._fd)
+
     this._fd = -1
+    this._interval = null
   }
 
   [Symbol.dispose]() {
     this.close()
+  }
+
+  _gc() {
+    if (this._fd === -1 || this._maxSize <= 0 || fs.fstatSync(this._fd).size < this._maxSize) return
+
+    let archived
+    try {
+      archived = this._rotate && this._rotate(this._path)
+    } catch {
+      archived = null
+    }
+
+    if (this._fd === -1) return
+
+    if (archived) fs.renameSync(this._path, archived)
+    else fs.ftruncateSync(this._fd)
+
+    fs.closeSync(this._fd)
+
+    this._fd = fs.openSync(this._path, 'a+')
+
+    this.emit('rotate', this._path, archived)
   }
 }
 
