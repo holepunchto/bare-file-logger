@@ -7,7 +7,7 @@ File system logger for Bare.
 ```js
 const FileLog = require('bare-file-logger')
 
-const log = new FileLog('console.log')
+const log = new FileLog('my-logs.txt')
 
 log.info('Hello %s', 'world!')
 ```
