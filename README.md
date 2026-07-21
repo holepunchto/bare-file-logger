@@ -12,48 +12,69 @@ const log = new FileLog('my-logs.txt')
 log.info('Hello %s', 'world!')
 ```
 
+<!-- bare-refgen:api start -->
+
 ## API
 
-#### `const log = new FileLog(path[, options])`
+### FileLog
 
-Options include:
+#### `new FileLog(path: string, options?: FileLogOptions)`
 
-```js
-options = {
-  // Maximum allowed byte size of the log file. This is a hint and not a hard
-  // limit; the logger will do its best to keep the file size within the limit,
-  // but provides no guarantees.
-  maxSize: 0,
+[source](https://github.com/holepunchto/bare-file-logger/blob/v1.2.1/index.d.ts#L20)
 
-  // A function called when the file size reaches `maxSize`. It receives the
-  // current file path and should return a new path to rename the file to, or a
-  // falsy value to do nothing. After a successful rename, a new empty log file
-  // is opened at the original path.
-  rotate: null,
+Construct a new `FileLog` that writes to the file at `path`.
 
-  // The interval in milliseconds at which the file size is checked against
-  // `maxSize` for rotation. Only active when both `maxSize` and `rotate` are
-  // set. The check starts after the first write.
-  rotateInterval: 2000
+**Parameters**
+
+| Parameter  | Type             | Default | Description                                                                   |
+| ---------- | ---------------- | ------- | ----------------------------------------------------------------------------- |
+| `path`     | `string`         | —       | Path to the log file; opened for appending, and created if it does not exist. |
+| `options?` | `FileLogOptions` | —       | Options controlling log rotation; see [`FileLogOptions`](#filelogoptions).    |
+
+#### `append(label: string, ...data: unknown[]): void`
+
+[source](https://github.com/holepunchto/bare-file-logger/blob/v1.2.1/index.d.ts#L15)
+
+Writes a single log line: the padded `label`, an ISO-8601 timestamp, and the formatted `data`, terminated by a newline.
+
+**Parameters**
+
+| Parameter | Type        | Default | Description                                                                                                                          |
+| --------- | ----------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `label`   | `string`    | —       | A short severity label, right-padded to five characters (e.g. `info`, `error`), prefixed to the line ahead of an ISO-8601 timestamp. |
+| `data`    | `unknown[]` | —       | Values to format into the log message, using the same formatting as `console.log`.                                                   |
+
+#### `close(): void`
+
+[source](https://github.com/holepunchto/bare-file-logger/blob/v1.2.1/index.d.ts#L16)
+
+Closes the underlying file descriptor and stops the rotation timer. Safe to call more than once.
+
+### Types
+
+#### `FileLogOptions`
+
+```ts
+interface FileLogOptions {
+  maxSize?: number
+  rotate?: (path: string) => string
+  rotateInterval?: number
 }
 ```
 
-#### Rotation
+[source](https://github.com/holepunchto/bare-file-logger/blob/v1.2.1/index.d.ts#L4)
 
-```js
-const log = new FileLog('app.log', {
-  maxSize: 1024 * 1024, // 1 MB
-  rotate(filePath) {
-    return filePath + '.' + Date.now()
-  }
-})
+#### `FileLogEvents`
+
+```ts
+interface FileLogEvents extends EventMap {
+  rotate: [path: string, archived: string | null]
+}
 ```
 
-When the log file reaches `maxSize`, the `rotate` function is called. If it returns a path, the current file is renamed to that path and a fresh log file is opened. If it returns a falsy value, no action is taken.
+[source](https://github.com/holepunchto/bare-file-logger/blob/v1.2.1/index.d.ts#L10)
 
-#### `log.on('rotate', (path, dest) => {})`
-
-Emitted after a successful rotation. `path` is the original log file path (now empty and ready for new writes) and `dest` is the path the previous log was renamed to.
+<!-- bare-refgen:api end -->
 
 ## License
 
