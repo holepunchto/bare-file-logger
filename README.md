@@ -13,6 +13,7 @@ log.info('Hello %s', 'world!')
 ```
 
 <!-- bare-refgen:api start -->
+
 ## API
 
 ### FileLog
@@ -25,10 +26,10 @@ Construct a new `FileLog` that writes to the file at `path`.
 
 **Parameters**
 
-| Parameter | Type | Default | Description |
-| --- | --- | --- | --- |
-| `path` | `string` | — | Path to the log file; opened for appending, and created if it does not exist. |
-| `options?` | `FileLogOptions` | — | Options controlling log rotation; see [`FileLogOptions`](#filelogoptions). |
+| Parameter  | Type             | Default | Description                                                                   |
+| ---------- | ---------------- | ------- | ----------------------------------------------------------------------------- |
+| `path`     | `string`         | —       | Path to the log file; opened for appending, and created if it does not exist. |
+| `options?` | `FileLogOptions` | —       | Options controlling log rotation; see [`FileLogOptions`](#filelogoptions).    |
 
 #### `append(label: string, ...data: unknown[]): void`
 
@@ -38,10 +39,10 @@ Writes a single log line: the padded `label`, an ISO-8601 timestamp, and the for
 
 **Parameters**
 
-| Parameter | Type | Default | Description |
-| --- | --- | --- | --- |
-| `label` | `string` | — | A short severity label, right-padded to five characters (e.g. `info`, `error`), prefixed to the line ahead of an ISO-8601 timestamp. |
-| `data` | `unknown[]` | — | Values to format into the log message, using the same formatting as `console.log`. |
+| Parameter | Type        | Default | Description                                                                                                                          |
+| --------- | ----------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `label`   | `string`    | —       | A short severity label, right-padded to five characters (e.g. `info`, `error`), prefixed to the line ahead of an ISO-8601 timestamp. |
+| `data`    | `unknown[]` | —       | Values to format into the log message, using the same formatting as `console.log`.                                                   |
 
 #### `close(): void`
 
@@ -72,6 +73,7 @@ interface FileLogEvents extends EventMap {
 ```
 
 [source](https://github.com/holepunchto/bare-file-logger/blob/v1.2.1/index.d.ts#L10)
+
 <!-- bare-refgen:api end -->
 
 ## License
